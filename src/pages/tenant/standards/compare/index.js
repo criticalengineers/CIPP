@@ -39,6 +39,7 @@ import { useDialog } from "../../../../hooks/use-dialog";
 import { Grid } from "@mui/system";
 import DOMPurify from "dompurify";
 import { ClockIcon } from "@heroicons/react/24/outline";
+import ReactMarkdown from "react-markdown";
 
 const Page = () => {
   const router = useRouter();
@@ -181,7 +182,12 @@ const Page = () => {
               // The standard should be reportable if there's an action with value === 'Report'
               const actions = standardConfig?.action ?? [];
               const reportingEnabled =
-                actions.filter((action) => action?.value === "Report").length > 0;
+                //if actions contains Report or Remediate, case insensitive, then we good.
+                actions.filter(
+                  (action) =>
+                    action?.value.toLowerCase() === "report" ||
+                    action?.value.toLowerCase() === "remediate"
+                ).length > 0;
 
               // Find the tenant's value for this standard
               const currentTenantStandard = currentTenantData.find(
@@ -1033,7 +1039,44 @@ const Page = () => {
                             >
                               <Info />
                             </Box>
-                            <Typography variant="body2">{standard.complianceDetails}</Typography>
+                            <Box
+                              sx={{
+                                // Style markdown links to match CIPP theme
+                                "& a": {
+                                  color: (theme) => theme.palette.primary.main,
+                                  textDecoration: "underline",
+                                  "&:hover": {
+                                    textDecoration: "none",
+                                  },
+                                },
+                                fontSize: "0.875rem", 
+                                lineHeight: 1.43,     
+                                "& p": {
+                                  my: 0,
+                                },
+                                flex: 1,
+                              }}
+                            >
+                              <ReactMarkdown
+                                components={{
+                                  // Make links open in new tab with security attributes
+                                  a: ({ href, children, ...props }) => (
+                                    <a
+                                      href={href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      {...props}
+                                    >
+                                      {children}
+                                    </a>
+                                  ),
+                                  // Convert paragraphs to spans to avoid unwanted spacing
+                                  p: ({ children }) => <span>{children}</span>,
+                                }}
+                              >
+                                {standard.complianceDetails}
+                              </ReactMarkdown>
+                            </Box>
                           </Stack>
                         </Card>
                       </Grid>
