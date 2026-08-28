@@ -1,7 +1,7 @@
 import { EyeIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
-import { Layout as DashboardLayout } from "/src/layouts/index.js";
-import { CippTablePage } from "/src/components/CippComponents/CippTablePage.jsx";
-import { useSettings } from "/src/hooks/use-settings";
+import { Layout as DashboardLayout } from "../../../../layouts/index.js";
+import { CippTablePage } from "../../../../components/CippComponents/CippTablePage.jsx";
+import { useSettings } from "../../../../hooks/use-settings";
 import { CheckCircle, Error, Warning, Refresh } from "@mui/icons-material";
 
 const Page = () => {
@@ -13,6 +13,7 @@ const Page = () => {
     {
       label: "View Device in Intune",
       link: `https://intune.microsoft.com/${tenantFilter}/#view/Microsoft_Intune_Devices/DeviceSettingsMenuBlade/~/overview/mdmDeviceId/[deviceId]`,
+      pinned: true,
       color: "info",
       icon: <EyeIcon />,
       target: "_blank",
@@ -22,6 +23,7 @@ const Page = () => {
     {
       label: "View Deployment Details",
       link: `https://intune.microsoft.com/${tenantFilter}/#view/Microsoft_Intune_DeviceSettings/DeploymentOverviewMenuBlade/~/autopilotDeployment/deploymentProfileId/[windowsAutopilotDeploymentProfileDisplayName]`,
+      pinned: true,
       color: "info",
       icon: <DocumentTextIcon />,
       target: "_blank",
@@ -79,7 +81,7 @@ const Page = () => {
   const filterList = [
     {
       filterName: "Failed Deployments",
-      value: [{ id: "deploymentState", value: "failed" }],
+      value: [{ id: "deploymentState", value: "failure" }],
       type: "column",
     },
     {

@@ -1,7 +1,7 @@
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { Layout as DashboardLayout } from "/src/layouts/index.js";
-import { CippTablePage } from "/src/components/CippComponents/CippTablePage.jsx";
-import { useSettings } from "/src/hooks/use-settings";
+import { Layout as DashboardLayout } from "../../../../layouts/index.js";
+import { CippTablePage } from "../../../../components/CippComponents/CippTablePage.jsx";
+import { useSettings } from "../../../../hooks/use-settings";
 
 const Page = () => {
   const pageTitle = "Analytics Device Score Report";
@@ -12,6 +12,7 @@ const Page = () => {
     {
       label: "View in Intune",
       link: `https://intune.microsoft.com/${tenantFilter}/#view/Microsoft_Intune_Devices/DeviceSettingsMenuBlade/~/overview/mdmDeviceId/[id]`,
+      pinned: true,
       color: "info",
       icon: <EyeIcon />,
       target: "_blank",
