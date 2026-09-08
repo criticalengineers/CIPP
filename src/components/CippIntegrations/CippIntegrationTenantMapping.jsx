@@ -3,29 +3,31 @@ import {
   Button,
   CardActions,
   CardContent,
+  IconButton,
   Stack,
   Skeleton,
   SvgIcon,
   Tooltip,
   Typography,
 } from "@mui/material";
+import { CippIcons } from "../../utils/icon-registry"
 import { Grid } from "@mui/system";
 import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { ApiGetCall, ApiPostCall } from "../../api/ApiCall";
 import { useRouter } from "next/router";
 import extensions from "../../data/Extensions.json";
 import { useEffect } from "react";
 import { CippDataTable } from "../CippTable/CippDataTable";
-import { PlusSmallIcon, SparklesIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { CippFormTenantSelector } from "../CippComponents/CippFormTenantSelector";
-import { Sync, SyncAlt } from "@mui/icons-material";
 import { CippFormComponent } from "../CippComponents/CippFormComponent";
 import { CippApiResults } from "../CippComponents/CippApiResults";
 import { ApiGetCallWithPagination } from "../../api/ApiCall";
 
 const CippIntegrationSettings = ({ children }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [tableData, setTableData] = useState([]);
 
   const mappings = ApiGetCall({
@@ -188,7 +190,7 @@ const CippIntegrationSettings = ({ children }) => {
       label: "Sync Now",
       icon: (
         <SvgIcon>
-          <Sync />
+          <CippIcons.Sync />
         </SvgIcon>
       ),
       confirmText: "Queue a NinjaOne sync for [Tenant]?",
@@ -196,7 +198,7 @@ const CippIntegrationSettings = ({ children }) => {
     },
     {
       label: "Delete Mapping",
-      icon: <TrashIcon />,
+      icon: <CippIcons.Delete />,
       confirmText: "Are you sure you want to delete this mapping?",
       customFunction: handleRemoveItem,
     },
@@ -234,56 +236,81 @@ const CippIntegrationSettings = ({ children }) => {
               }}
             >
               <Grid size={{ md: 4, xs: 12 }}>
-                <Box sx={{ my: "auto" }}>
-                  <CippFormTenantSelector
-                    formControl={formControl}
-                    multiple={false}
-                    required={false}
-                    disableClearable={false}
-                    removeOptions={removedTenantIds}
-                    valueField="customerId"
-                  />
-                </Box>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Box sx={{ flexGrow: 1, my: "auto" }}>
+                    <CippFormTenantSelector
+                      formControl={formControl}
+                      multiple={false}
+                      required={false}
+                      disableClearable={false}
+                      removeOptions={removedTenantIds}
+                      valueField="customerId"
+                    />
+                  </Box>
+                  <Tooltip title="Refresh tenant list">
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        queryClient.invalidateQueries({ queryKey: ["ListTenants-FormnotAllTenants"] })
+                      }
+                    >
+                      <SvgIcon>
+                        <CippIcons.Sync />
+                      </SvgIcon>
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </Grid>
               <Grid>
                 <Box sx={{ my: "auto" }}>
                   <SvgIcon>
-                    <SyncAlt />
+                    <CippIcons.SyncAlt />
                   </SvgIcon>
                 </Box>
               </Grid>
               <Grid size={{ md: 4, xs: 12 }}>
-                <CippFormComponent
-                  type="autoComplete"
-                  fullWidth
-                  name="integrationCompany"
-                  formControl={formControl}
-                  label={`Select ${extension.name} Company`}
-                  options={mappings?.data?.Companies?.map((company) => {
-                    return {
-                      label: company.name,
-                      value: company.value,
-                    };
-                  })}
-                  creatable={false}
-                  multiple={false}
-                  isFetching={mappings.isFetching}
-                  sortOptions={true}
-                />
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <CippFormComponent
+                      type="autoComplete"
+                      fullWidth
+                      name="integrationCompany"
+                      formControl={formControl}
+                      label={`Select ${extension.name} Company`}
+                      options={mappings?.data?.Companies?.map((company) => {
+                        return {
+                          label: company.name,
+                          value: company.value,
+                        };
+                      })}
+                      creatable={false}
+                      multiple={false}
+                      isFetching={mappings.isFetching}
+                      sortOptions={true}
+                    />
+                  </Box>
+                  <Tooltip title={`Refresh ${extension.name} companies`}>
+                    <IconButton size="small" onClick={() => mappings.refetch()}>
+                      <SvgIcon>
+                        <CippIcons.Sync />
+                      </SvgIcon>
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </Grid>
               <Grid>
                 <Stack direction={"row"} spacing={1}>
                   <Tooltip title="Add Mapping">
                     <Button size="small" onClick={() => handleAddItem()} variant="contained">
                       <SvgIcon>
-                        <PlusSmallIcon />
+                        <CippIcons.PlusSmallIcon />
                       </SvgIcon>
                     </Button>
                   </Tooltip>
                   <Tooltip title="Automap Companies">
                     <Button size="small" onClick={() => handleAutoMap()} variant="contained">
                       <SvgIcon>
-                        <SparklesIcon />
+                        <CippIcons.SparklesIcon />
                       </SvgIcon>
                     </Button>
                   </Tooltip>
@@ -296,7 +323,7 @@ const CippIntegrationSettings = ({ children }) => {
                       variant="contained"
                     >
                       <SvgIcon>
-                        <Sync />
+                        <CippIcons.Sync />
                       </SvgIcon>
                     </Button>
                   </Tooltip>
